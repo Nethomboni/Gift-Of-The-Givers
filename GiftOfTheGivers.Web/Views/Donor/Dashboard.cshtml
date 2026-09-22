@@ -1,0 +1,97 @@
+@model GiftOfTheGivers.Web.Models.DonorDashboardViewModel
+@{
+    ViewData["Title"] = "Donor Dashboard";
+}
+
+<div class="dashboard-hero">
+    <div class="container">
+        <p class="eyebrow mb-1">Donor Portal</p>
+        <h1>Welcome, @Model.FullName</h1>
+        <p>Thank you for supporting Gift of the Givers - here's a look at your donation history.</p>
+    </div>
+</div>
+
+<div class="container my-4">
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4">
+            <div class="stat-tile">
+                <div class="stat-icon" style="background: var(--danger-soft); color: var(--terracotta);"><i class="bi bi-cash-coin"></i></div>
+                <span class="stat-value">R@Model.TotalDonated.ToString("N0")</span>
+                <span class="stat-label">Total Donated</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="stat-tile">
+                <div class="stat-icon" style="background: var(--warning-soft); color: var(--amber);"><i class="bi bi-heart-fill"></i></div>
+                <span class="stat-value">@Model.DonationCount</span>
+                <span class="stat-label">Number of Donations</span>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="stat-tile">
+                <div class="stat-icon" style="background: var(--success-soft); color: var(--teal);"><i class="bi bi-clock-history"></i></div>
+                @if (Model.LatestDonation != null)
+                {
+                    <span class="stat-value">R@Model.LatestDonation.Amount.ToString("N0")</span>
+                    <span class="stat-label">Latest Donation - @Model.LatestDonation.CreatedAt.ToString("dd MMM yyyy")</span>
+                }
+                else
+                {
+                    <span class="stat-value">-</span>
+                    <span class="stat-label">No donations yet</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-controller="Donation" asp-action="Index" class="btn btn-danger">
+            <i class="bi bi-heart-fill me-2"></i>Make a Donation
+        </a>
+    </div>
+
+    <div class="dashboard-panel">
+        <div class="panel-header">
+            <h5><i class="bi bi-clock-history me-2"></i>Donation History</h5>
+        </div>
+        <div class="panel-body">
+            @if (!Model.DonationHistory.Any())
+            {
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    No donations have been recorded yet.
+                    <div class="mt-3">
+                        <a asp-controller="Donation" asp-action="Index" class="btn btn-danger btn-sm">Make Your First Donation</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive-card">
+                    <table class="table table-clean">
+                        <thead>
+                            <tr><th>Reference</th><th>Amount</th><th>Type</th><th>Cause</th><th>Date</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var donation in Model.DonationHistory)
+                            {
+                                <tr>
+                                    <td>@donation.ReferenceNumber</td>
+                                    <td>@donation.Currency @donation.Amount.ToString("N2")</td>
+                                    <td>@(donation.DonationType == "Recurring" ? $"Recurring ({donation.Frequency})" : "One-Time")</td>
+                                    <td>@donation.Cause</td>
+                                    <td>@donation.CreatedAt.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <a asp-controller="Donation" asp-action="Certificate" asp-route-reference="@donation.ReferenceNumber" class="small">
+                                            <i class="bi bi-file-earmark-text me-1"></i>Certificate
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

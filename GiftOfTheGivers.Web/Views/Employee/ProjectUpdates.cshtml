@@ -1,0 +1,82 @@
+@model GiftOfTheGivers.Web.Models.ProjectUpdateViewModel
+@{
+    ViewData["Title"] = "Project Updates";
+    ViewData["DashboardTitle"] = "Project Updates";
+    Layout = "_EmployeeLayout";
+    var recentUpdates = ViewBag.RecentUpdates as List<GiftOfTheGivers.Web.Models.ProjectUpdate> ?? new();
+}
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-megaphone-fill me-2"></i>Post a Project Update</h5>
+    </div>
+    <div class="panel-body">
+        <form asp-controller="Employee" asp-action="ProjectUpdates" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="ProjectId" class="form-label">Project</label>
+                    <select asp-for="ProjectId" class="form-select">
+                        <option value="">-- Choose a project --</option>
+                        @foreach (var project in Model.AvailableProjects)
+                        {
+                            <option value="@project.Id">@project.Name (@project.Location)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ProjectId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Location" class="form-label">Location <span class="text-muted-soft fw-normal">(optional - defaults to project location)</span></label>
+                    <input asp-for="Location" class="form-control" placeholder="e.g. Polokwane, Limpopo" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="Title" class="form-label">Update Title</label>
+                    <input asp-for="Title" class="form-control" placeholder="e.g. Food parcels distributed to affected families" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe what happened..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="ImageUrl" class="form-label">Image URL <span class="text-muted-soft fw-normal">(optional)</span></label>
+                    <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-danger mt-4">
+                <i class="bi bi-send-fill me-2"></i>Post Update
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-clock-history me-2"></i>Recently Posted</h5>
+    </div>
+    <div class="panel-body">
+        @if (!recentUpdates.Any())
+        {
+            <div class="empty-state"><i class="bi bi-megaphone"></i>No project updates have been posted yet.</div>
+        }
+        else
+        {
+            @foreach (var update in recentUpdates)
+            {
+                <div class="d-flex mb-3">
+                    <div class="rounded-icon me-3 flex-shrink-0"><i class="bi bi-megaphone-fill"></i></div>
+                    <div>
+                        <div class="fw-semibold">@update.Title <span class="text-muted-soft fw-normal">- @update.Project?.Name</span></div>
+                        <p class="text-muted-soft small mb-1">@update.Description</p>
+                        <div class="text-muted-soft small">
+                            @update.CreatedAt.ToString("dd MMM yyyy") @(string.IsNullOrWhiteSpace(update.PostedByName) ? "" : "by " + update.PostedByName)
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

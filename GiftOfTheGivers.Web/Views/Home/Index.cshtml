@@ -1,0 +1,150 @@
+@model GiftOfTheGivers.Web.Models.HomeIndexViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="hero text-center">
+    <div class="container">
+        <p class="eyebrow mb-2">Restoring Hope. Saving Lives.</p>
+        <h1>Together We Can<br>Change Lives</h1>
+        <p class="lead mx-auto">
+            Every donation and every volunteer hour helps communities affected by disasters and humanitarian
+            emergencies get back on their feet - faster, and with dignity.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-2">
+            <a asp-controller="Donation" asp-action="Index" class="btn btn-danger btn-lg px-4">
+                <i class="bi bi-heart-fill me-2"></i>Donate Now
+            </a>
+            <a asp-controller="Volunteer" asp-action="Index" class="btn btn-brand-outline btn-lg px-4">
+                <i class="bi bi-people-fill me-2"></i>Become a Volunteer
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="alert-stripe"></div>
+
+<div class="stats-strip">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-6 col-md-3 stat">
+                <span class="num"><span data-count-to="@Model.CommunitiesReachedSample">0</span></span>
+                <span class="label">Communities Reached</span>
+            </div>
+            <div class="col-6 col-md-3 stat">
+                <span class="num"><span data-count-to="@Model.VolunteersCount">0</span></span>
+                <span class="label">Volunteers</span>
+            </div>
+            <div class="col-6 col-md-3 stat">
+                <span class="num"><span data-count-to="@Model.ActiveProjectsCount">0</span></span>
+                <span class="label">Relief Projects</span>
+            </div>
+            <div class="col-6 col-md-3 stat">
+                <span class="num"><span data-count-to="@Model.MealsDistributedSample">0</span>+</span>
+                <span class="label">Meals Distributed</span>
+            </div>
+        </div>
+        <p class="text-center mb-0 mt-3" style="color:#8f8672; font-size:0.78rem;">
+            Communities Reached and Meals Distributed are illustrative prototype figures, not verified organisational statistics.
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="section-heading text-center mx-auto mt-5 pt-3" style="max-width: 40rem;">
+        <p class="eyebrow">What We Do</p>
+        <h2>Our Relief Areas</h2>
+        <p class="mx-auto">From emergency response to long-term recovery, our work spans four core areas of humanitarian support.</p>
+    </div>
+    <div class="row g-4 mt-2">
+        <div class="col-md-6 col-lg-3">
+            <div class="value-card text-center">
+                <div class="rounded-icon mx-auto mb-3"><i class="bi bi-droplet-fill"></i></div>
+                <h5>Disaster Relief</h5>
+                <p class="text-muted-soft mb-0">Rapid assistance for communities affected by floods, fires, and other disasters.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="value-card text-center">
+                <div class="rounded-icon mx-auto mb-3"><i class="bi bi-basket2-fill"></i></div>
+                <h5>Food Relief</h5>
+                <p class="text-muted-soft mb-0">Food parcels and hot meals for communities and households in need.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="value-card text-center">
+                <div class="rounded-icon mx-auto mb-3"><i class="bi bi-heart-pulse-fill"></i></div>
+                <h5>Medical Support</h5>
+                <p class="text-muted-soft mb-0">Medical assistance and humanitarian healthcare support on the ground.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="value-card text-center">
+                <div class="rounded-icon mx-auto mb-3"><i class="bi bi-book-fill"></i></div>
+                <h5>Education</h5>
+                <p class="text-muted-soft mb-0">Support for vulnerable learners and communities to keep learning.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 pt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div class="section-heading">
+            <p class="eyebrow">Ongoing Work</p>
+            <h2 class="mb-0">Featured Relief Projects</h2>
+        </div>
+        <a asp-controller="Projects" asp-action="Index" class="btn btn-brand-outline">View All Projects</a>
+    </div>
+
+    @if (Model.FeaturedProjects.Any())
+    {
+        <div class="row g-4">
+            @foreach (var project in Model.FeaturedProjects)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="project-card">
+                        <div class="project-tile-art">
+                            <img src="@project.ImageUrl" alt="@project.Name" />
+                        </div>
+                        <div class="card-body">
+                            <span class="badge-soft badge-soft-amber mb-2"><i class="bi bi-geo-alt-fill me-1"></i>@project.Location</span>
+                            <h5>@project.Name</h5>
+                            <p class="text-muted-soft" style="min-height: 3rem;">@project.Description</p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" role="progressbar" style="width:@(project.ProgressPercentage)%"
+                                     aria-valuenow="@project.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted-soft mb-3">
+                                <span>R@project.RaisedAmount.ToString("N0") raised</span>
+                                <span>Target R@project.TargetAmount.ToString("N0")</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-brand-outline btn-sm flex-fill">View Project</a>
+                                <a asp-controller="Donation" asp-action="Index" class="btn btn-danger btn-sm flex-fill">Donate</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state card-surface">
+            <i class="bi bi-folder2-open"></i>
+            No relief projects have been published yet.
+        </div>
+    }
+</div>
+
+<div class="container mt-5 pt-4 mb-5 pb-3">
+    <div class="card-surface text-center p-5" style="background: linear-gradient(135deg, var(--terracotta), #7c2f21); color:#fff; border:none;">
+        <h2 class="mb-2" style="color:#fff;">Ready to make a difference?</h2>
+        <p class="mb-4" style="color:#f0d9cf;">Whether you give your time or your resources, every contribution restores hope for someone in crisis.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a asp-controller="Donation" asp-action="Index" class="btn btn-light btn-lg px-4 fw-semibold">Donate Now</a>
+            <a asp-controller="Volunteer" asp-action="Index" class="btn btn-outline-light btn-lg px-4">Become a Volunteer</a>
+        </div>
+    </div>
+</div>

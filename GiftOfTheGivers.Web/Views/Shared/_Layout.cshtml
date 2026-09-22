@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gift of the Givers</title>
+    <meta name="description" content="Gift of the Givers - a humanitarian relief prototype. Restoring Hope. Saving Lives." />
+    <link rel="icon" type="image/png" href="~/images/logo.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GiftOfTheGivers.Web.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#2B2620;">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index" style="font-family:'Fraunces',serif;">
+                    <img src="~/images/logo.png" alt="Gift of the Givers logo" height="36" class="me-2" onerror="this.style.display='none'" />
+                    <span>Gift of the Givers</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="About">About</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Donation" asp-action="Index">Donate</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Volunteer" asp-action="Index">Volunteer</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Projects" asp-action="Index">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+        <div class="alert-stripe"></div>
+    </header>
+
+    <main role="main">
+        @{
+            var successMessage = TempData["SuccessMessage"] as string;
+            var errorMessage = TempData["ErrorMessage"] as string;
+        }
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="container mt-3">
+                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <div>@successMessage</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="container mt-3">
+                <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>@errorMessage</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-4">
+                    <h6><i class="bi bi-compass-fill me-2"></i>Gift of the Givers</h6>
+                    <p class="mb-2">A humanitarian foundation coordinating disaster relief, food support, medical aid, and education assistance for communities in crisis.</p>
+                    <p class="fw-semibold" style="color:#f2e8dc;">Restoring Hope. Saving Lives.</p>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <h6>Quick Links</h6>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="Home" asp-action="About">About</a></li>
+                        <li><a asp-controller="Donation" asp-action="Index">Donate</a></li>
+                        <li><a asp-controller="Volunteer" asp-action="Index">Volunteer</a></li>
+                        <li><a asp-controller="Projects" asp-action="Index">Projects</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6>Contact</h6>
+                    <ul>
+                        <li><i class="bi bi-envelope-fill me-2"></i>info@giftofthegivers.local</li>
+                        <li><i class="bi bi-telephone-fill me-2"></i>+27 11 555 0100</li>
+                        <li><i class="bi bi-geo-alt-fill me-2"></i>Johannesburg, South Africa</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h6>Follow Us</h6>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook" onclick="return false;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" onclick="return false;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="X / Twitter" onclick="return false;"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" aria-label="LinkedIn" onclick="return false;"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2">
+                <span>&copy; 2026 Gift of the Givers Foundation. Prototype for academic purposes.</span>
+                <span>Built with ASP.NET Core MVC</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

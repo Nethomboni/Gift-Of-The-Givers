@@ -1,0 +1,93 @@
+@model GiftOfTheGivers.Web.Models.ContactViewModel
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="page-header">
+    <div class="container">
+        <p class="eyebrow mb-2">Get In Touch</p>
+        <h1>Contact Us</h1>
+    </div>
+</div>
+
+<div class="container mb-5 pb-4">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card-surface p-4 h-100">
+                <h5 class="mb-3">Our Details</h5>
+                <div class="d-flex mb-3">
+                    <div class="rounded-icon me-3 flex-shrink-0"><i class="bi bi-envelope-fill"></i></div>
+                    <div>
+                        <div class="fw-semibold">Email</div>
+                        <div class="text-muted-soft">info@giftofthegivers.local</div>
+                    </div>
+                </div>
+                <div class="d-flex mb-3">
+                    <div class="rounded-icon me-3 flex-shrink-0"><i class="bi bi-telephone-fill"></i></div>
+                    <div>
+                        <div class="fw-semibold">Telephone</div>
+                        <div class="text-muted-soft">+27 11 555 0100</div>
+                    </div>
+                </div>
+                <div class="d-flex mb-4">
+                    <div class="rounded-icon me-3 flex-shrink-0"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div>
+                        <div class="fw-semibold">Location</div>
+                        <div class="text-muted-soft">Johannesburg, South Africa</div>
+                    </div>
+                </div>
+
+                <div class="ratio ratio-4x3 rounded overflow-hidden" style="background: var(--sand);">
+                    <div class="d-flex flex-column align-items-center justify-content-center text-center p-3">
+                        <i class="bi bi-map" style="font-size:2.5rem; color:var(--terracotta);"></i>
+                        <span class="text-muted-soft small mt-2">Map placeholder - prototype only</span>
+                    </div>
+                </div>
+
+                <h6 class="mt-4 mb-2">Follow Us</h6>
+                <div class="footer-social" style="--bs-body-color:var(--ink);">
+                    <a href="#" class="text-decoration-none" style="background:var(--sand); color:var(--ink);" onclick="return false;"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-decoration-none" style="background:var(--sand); color:var(--ink);" onclick="return false;"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-decoration-none" style="background:var(--sand); color:var(--ink);" onclick="return false;"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="form-panel" style="max-width:none;">
+                <h5 class="mb-3">Send Us a Message</h5>
+                <p class="text-muted-soft small">This is a prototype contact form - messages aren't actually emailed anywhere yet.</p>
+                <form asp-controller="Home" asp-action="Contact" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label">Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="Your full name" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Subject" class="form-label">Subject</label>
+                            <input asp-for="Subject" class="form-control" placeholder="How can we help?" />
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Message" class="form-label">Message</label>
+                            <textarea asp-for="Message" class="form-control" rows="5" placeholder="Write your message..."></textarea>
+                            <span asp-validation-for="Message" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger mt-4"><i class="bi bi-send-fill me-2"></i>Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

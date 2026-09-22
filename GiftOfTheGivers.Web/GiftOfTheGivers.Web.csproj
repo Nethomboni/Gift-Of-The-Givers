@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Prototype-stage persistence only (Section 2/32/54 of the brief): an
+         in-memory EF Core provider, no external database, no connection
+         string, no migrations, nothing to provision or configure at deploy
+         time. Data resets whenever the app restarts, which is expected and
+         fine for a Part 1 prototype - swap UseInMemoryDatabase(...) for
+         UseSqlServer(...) in Program.cs later if Part 2 needs real
+         persistence; nothing else in the project would need to change. -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.20" />
+  </ItemGroup>
+
+</Project>

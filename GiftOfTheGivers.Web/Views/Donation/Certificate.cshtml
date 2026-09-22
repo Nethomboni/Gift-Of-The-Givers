@@ -1,0 +1,63 @@
+@model GiftOfTheGivers.Web.Models.Donation
+@{
+    ViewData["Title"] = "Tax Certificate";
+    bool autoPrint = ViewBag.AutoPrint as bool? ?? false;
+}
+
+<div class="container my-5">
+    <div class="no-print d-flex flex-wrap justify-content-between align-items-center mb-4" style="max-width:760px; margin-inline:auto;">
+        <a asp-controller="Donation" asp-action="Confirmation" asp-route-reference="@Model.ReferenceNumber" class="btn btn-brand-outline btn-sm">
+            <i class="bi bi-arrow-left me-2"></i>Back to Receipt
+        </a>
+        <button type="button" class="btn btn-danger btn-sm" onclick="window.print()">
+            <i class="bi bi-printer-fill me-2"></i>Download / Print Certificate
+        </button>
+    </div>
+
+    <div class="certificate-sheet">
+        <div class="text-center mb-4">
+            <img src="~/images/logo.png" alt="Gift of the Givers logo" class="cert-logo mb-2" onerror="this.style.display='none'" />
+            <p class="eyebrow mb-1">Gift of the Givers Foundation</p>
+            <h1>Prototype Tax Certificate</h1>
+            <p class="text-muted-soft mb-0">Restoring Hope. Saving Lives.</p>
+        </div>
+
+        <hr class="divider-dashed" />
+
+        <div class="row g-3 my-3">
+            <div class="col-6"><span class="label d-block text-muted-soft small">Certificate / Reference No.</span><span class="fw-semibold">@Model.ReferenceNumber</span></div>
+            <div class="col-6"><span class="label d-block text-muted-soft small">Date of Donation</span><span class="fw-semibold">@Model.CreatedAt.ToString("dd MMMM yyyy")</span></div>
+            <div class="col-6"><span class="label d-block text-muted-soft small">Donor</span><span class="fw-semibold">@Model.DisplayName</span></div>
+            <div class="col-6"><span class="label d-block text-muted-soft small">Donation Amount</span><span class="fw-semibold">@Model.Currency @Model.Amount.ToString("N2")</span></div>
+            <div class="col-6">
+                <span class="label d-block text-muted-soft small">Donation Type</span>
+                <span class="fw-semibold">@(Model.DonationType == "Recurring" ? $"Recurring ({Model.Frequency})" : "One-Time")</span>
+            </div>
+            <div class="col-6"><span class="label d-block text-muted-soft small">Cause Supported</span><span class="fw-semibold">@Model.Cause</span></div>
+            @if (!string.IsNullOrWhiteSpace(Model.CertificateNumber))
+            {
+                <div class="col-6"><span class="label d-block text-muted-soft small">Certificate No. (Azure Function)</span><span class="fw-semibold">@Model.CertificateNumber</span></div>
+                <div class="col-6"><span class="label d-block text-muted-soft small">Validation Code</span><span class="fw-semibold">@Model.CertificateValidationCode</span></div>
+            }
+        </div>
+
+        <p class="text-center my-4">
+            With sincere thanks, Gift of the Givers Foundation acknowledges the generous contribution described above.
+        </p>
+
+        <div class="cert-note text-center">
+            This certificate is generated for academic prototype demonstration purposes only and is not a valid tax document.
+        </div>
+    </div>
+</div>
+
+@if (autoPrint)
+{
+    @section Scripts {
+        <script>
+            window.addEventListener("load", function () {
+                window.print();
+            });
+        </script>
+    }
+}

@@ -1,0 +1,21 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="gEducation" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C98A2B"/>
+      <stop offset="1" stop-color="#3D6B66"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#gEducation)"/>
+  <circle cx="368" cy="24" r="70" fill="#ffffff" opacity="0.06"/>
+  <circle cx="20" cy="280" r="90" fill="#000000" opacity="0.06"/>
+  
+  <g transform="translate(200,158)">
+    <path d="M0 -55 C -35 -75, -85 -70, -85 -70 L -85 60 C -85 60, -35 55, 0 75 C 35 55, 85 60, 85 60 L 85 -70 C 85 -70, 35 -75, 0 -55 Z" fill="#FFFFFF" fill-opacity="0.18" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="0" y1="-55" x2="0" y2="75" stroke="#FFFFFF" stroke-width="5" opacity="0.7"/>
+    <line x1="-62" y1="-45" x2="-20" y2="-38" stroke="#FFFFFF" stroke-width="4" opacity="0.6"/>
+    <line x1="-62" y1="-20" x2="-20" y2="-14" stroke="#FFFFFF" stroke-width="4" opacity="0.6"/>
+    <line x1="20" y1="-38" x2="62" y2="-45" stroke="#FFFFFF" stroke-width="4" opacity="0.6"/>
+    <line x1="20" y1="-14" x2="62" y2="-20" stroke="#FFFFFF" stroke-width="4" opacity="0.6"/>
+  </g>
+
+</svg>

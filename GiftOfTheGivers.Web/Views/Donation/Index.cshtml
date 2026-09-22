@@ -1,0 +1,137 @@
+@model GiftOfTheGivers.Web.Models.DonationViewModel
+@{
+    ViewData["Title"] = "Donate";
+    bool isLoggedIn = User.Identity?.IsAuthenticated == true;
+    string? currentUserFullName = ViewBag.CurrentUserFullName as string;
+}
+
+<div class="page-header">
+    <div class="container">
+        <p class="eyebrow mb-2">Make a Difference</p>
+        <h1>Donate</h1>
+        <p class="text-muted-soft mb-0" style="max-width:40rem;">
+            Your donation helps deliver food, shelter, medical aid, and education support to communities in crisis.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5 pb-4">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card-surface p-4 p-md-5">
+                <form asp-controller="Donation" asp-action="Index" method="post" id="donation-form" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <label class="form-label d-block">Donation Type</label>
+                    <div class="toggle-pill-group mb-4">
+                        <input type="radio" asp-for="DonationType" id="donationTypeOneOff" value="OneOff" checked="@(Model.DonationType != "Recurring")" />
+                        <label for="donationTypeOneOff">One-Time</label>
+                        <input type="radio" asp-for="DonationType" id="donationTypeRecurring" value="Recurring" checked="@(Model.DonationType == "Recurring")" />
+                        <label for="donationTypeRecurring">Recurring</label>
+                    </div>
+
+                    <div id="frequency-wrap" class="mb-4 d-none">
+                        <label asp-for="Frequency" class="form-label">Frequency</label>
+                        <select asp-for="Frequency" class="form-select">
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly" selected>Monthly</option>
+                            <option value="Quarterly">Quarterly</option>
+                        </select>
+                    </div>
+
+                    <label class="form-label d-block">Amount</label>
+                    <div class="row g-2 mb-2">
+                        @foreach (var preset in GiftOfTheGivers.Web.Models.DonationViewModel.PresetAmounts)
+                        {
+                            <div class="col-4 col-md-2">
+                                <button type="button" class="amount-btn" data-amount-btn="@preset">R@preset.ToString("N0")</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="input-group mb-4" style="max-width:260px;">
+                        <span class="input-group-text">R</span>
+                        <input asp-for="Amount" type="number" step="1" min="10" class="form-control" placeholder="Custom amount" />
+                    </div>
+                    <span asp-validation-for="Amount" class="text-danger small d-block mb-3"></span>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Currency" class="form-label">Currency</label>
+                            <select asp-for="Currency" class="form-select">
+                                <option value="ZAR">ZAR - South African Rand</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                            </select>
+                            <span class="text-muted-soft small">Currency is symbolic at prototype stage - no conversion is applied.</span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Cause" class="form-label">Donation Cause</label>
+                            <select asp-for="Cause" class="form-select">
+                                @foreach (var cause in GiftOfTheGivers.Web.Models.DonationViewModel.CauseOptions)
+                                {
+                                    <option value="@cause">@cause</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="divider-dashed my-4" />
+
+                    <label class="form-label d-block">Donor Details</label>
+                    @if (isLoggedIn)
+                    {
+                        <div class="alert alert-light border d-flex align-items-center">
+                            <i class="bi bi-person-check-fill me-2"></i>
+                            Donating as <strong class="mx-1">@currentUserFullName</strong> - you can still choose to donate anonymously below.
+                        </div>
+                    }
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" asp-for="IsAnonymous" />
+                        <label class="form-check-label" asp-for="IsAnonymous">
+                            Donate as Anonymous Guest
+                        </label>
+                    </div>
+
+                    @if (!isLoggedIn)
+                    {
+                        <div id="donor-name-wrap" class="mb-4">
+                            <label asp-for="DonorName" class="form-label">Your Name</label>
+                            <input asp-for="DonorName" class="form-control" placeholder="Full name" />
+                            <span asp-validation-for="DonorName" class="text-danger small"></span>
+                            <div class="text-muted-soft small mt-1">
+                                Prefer not to say? <a href="#" onclick="document.getElementById('IsAnonymous').click(); return false;">Donate anonymously instead</a> - no account needed.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="donor-name-wrap" class="d-none"></div>
+                    }
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 mt-2">
+                        <i class="bi bi-heart-fill me-2"></i>Confirm Donation
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="review-panel sticky-top" style="top: 1.5rem;">
+                <h6 class="mb-3"><i class="bi bi-receipt me-2"></i>Donation Review</h6>
+                <div class="review-row"><span class="label">Type</span><span class="value" id="review-type">One-Time</span></div>
+                <div class="review-row"><span class="label">Currency</span><span class="value" id="review-currency">ZAR</span></div>
+                <div class="review-row"><span class="label">Amount</span><span class="value">R<span id="review-amount">0.00</span></span></div>
+                <div class="review-row"><span class="label">Cause</span><span class="value" id="review-cause">General Relief</span></div>
+                <p class="text-muted-soft small mt-3 mb-0">
+                    This is a prototype donation flow - no real payment is processed. Submitting generates a
+                    reference number and a placeholder tax certificate.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

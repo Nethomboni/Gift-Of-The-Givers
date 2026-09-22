@@ -1,0 +1,170 @@
+@model GiftOfTheGivers.Web.Models.EmployeeDashboardViewModel
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    ViewData["DashboardTitle"] = "Employee Dashboard";
+    Layout = "_EmployeeLayout";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: var(--danger-soft); color: var(--terracotta);"><i class="bi bi-cash-coin"></i></div>
+            <span class="stat-value">R@Model.TotalDonations.ToString("N0")</span>
+            <span class="stat-label">Total Donations</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: var(--warning-soft); color: var(--amber);"><i class="bi bi-kanban-fill"></i></div>
+            <span class="stat-value">@Model.ActiveProjectsCount</span>
+            <span class="stat-label">Active Projects</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: var(--success-soft); color: var(--teal);"><i class="bi bi-people-fill"></i></div>
+            <span class="stat-value">@Model.VolunteerSignupsCount</span>
+            <span class="stat-label">Volunteer Sign-ups</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: var(--neutral-soft); color: var(--muted);"><i class="bi bi-check2-circle"></i></div>
+            <span class="stat-value">@Model.CompletedProjectsCount</span>
+            <span class="stat-label">Completed Projects</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-cash-coin me-2"></i>Recent Donations</h5>
+    </div>
+    <div class="panel-body">
+        @if (!Model.RecentDonations.Any())
+        {
+            <div class="empty-state"><i class="bi bi-inbox"></i>No donations have been recorded yet.</div>
+        }
+        else
+        {
+            <div class="table-responsive-card">
+                <table class="table table-clean">
+                    <thead>
+                        <tr><th>Donor</th><th>Amount</th><th>Currency</th><th>Type</th><th>Date</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var donation in Model.RecentDonations)
+                        {
+                            <tr>
+                                <td>@donation.DisplayName</td>
+                                <td>@donation.Amount.ToString("N2")</td>
+                                <td>@donation.Currency</td>
+                                <td>@(donation.DonationType == "Recurring" ? $"Recurring ({donation.Frequency})" : "One-Time")</td>
+                                <td>@donation.CreatedAt.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-people-fill me-2"></i>Volunteer Sign-ups</h5>
+        <a asp-controller="Employee" asp-action="Volunteers" class="small">View All &rarr;</a>
+    </div>
+    <div class="panel-body">
+        @if (!Model.RecentVolunteers.Any())
+        {
+            <div class="empty-state"><i class="bi bi-person-x"></i>No volunteer registrations are available.</div>
+        }
+        else
+        {
+            <div class="table-responsive-card">
+                <table class="table table-clean">
+                    <thead>
+                        <tr><th>Name</th><th>Skills</th><th>Availability</th><th>Date</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var volunteer in Model.RecentVolunteers)
+                        {
+                            <tr>
+                                <td>@volunteer.FullName</td>
+                                <td>@volunteer.Skills</td>
+                                <td>@volunteer.Availability</td>
+                                <td>@volunteer.SubmittedAt.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-kanban-fill me-2"></i>Ongoing Projects</h5>
+        <a asp-controller="Projects" asp-action="Index" class="small">View All &rarr;</a>
+    </div>
+    <div class="panel-body">
+        @if (!Model.OngoingProjects.Any())
+        {
+            <div class="empty-state"><i class="bi bi-folder2-open"></i>No ongoing projects at the moment.</div>
+        }
+        else
+        {
+            <div class="table-responsive-card">
+                <table class="table table-clean">
+                    <thead>
+                        <tr><th>Project</th><th>Location</th><th>Progress</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var project in Model.OngoingProjects)
+                        {
+                            <tr>
+                                <td><a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">@project.Name</a></td>
+                                <td>@project.Location</td>
+                                <td style="min-width:140px;">
+                                    <div class="progress" style="height:6px;">
+                                        <div class="progress-bar" style="width:@(project.ProgressPercentage)%"></div>
+                                    </div>
+                                    <span class="small text-muted-soft">@project.ProgressPercentage%</span>
+                                </td>
+                                <td><span class="badge-soft badge-soft-terracotta">Ongoing</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-megaphone-fill me-2"></i>Recent Updates</h5>
+        <a asp-controller="Employee" asp-action="ProjectUpdates" class="small">Post an Update &rarr;</a>
+    </div>
+    <div class="panel-body">
+        @if (!Model.RecentUpdates.Any())
+        {
+            <div class="empty-state"><i class="bi bi-megaphone"></i>No project updates have been posted yet.</div>
+        }
+        else
+        {
+            @foreach (var update in Model.RecentUpdates)
+            {
+                <div class="d-flex mb-3">
+                    <div class="rounded-icon me-3 flex-shrink-0"><i class="bi bi-megaphone-fill"></i></div>
+                    <div>
+                        <div class="fw-semibold">@update.Title <span class="text-muted-soft fw-normal">- @update.Project?.Name</span></div>
+                        <div class="text-muted-soft small">@update.CreatedAt.ToString("dd MMM yyyy") @(string.IsNullOrWhiteSpace(update.PostedByName) ? "" : "by " + update.PostedByName)</div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

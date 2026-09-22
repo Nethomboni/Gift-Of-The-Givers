@@ -1,0 +1,66 @@
+@model List<GiftOfTheGivers.Web.Models.Project>
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<div class="page-header">
+    <div class="container">
+        <p class="eyebrow mb-2">Our Work</p>
+        <h1>Relief Projects</h1>
+        <p class="text-muted-soft mb-0" style="max-width:40rem;">
+            A look at the relief projects Gift of the Givers is currently running - and some we've already completed.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5 pb-4">
+    @if (!Model.Any())
+    {
+        <div class="empty-state card-surface">
+            <i class="bi bi-folder2-open"></i>
+            No relief projects have been published yet.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var project in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="project-card">
+                        <div class="project-tile-art">
+                            <img src="@project.ImageUrl" alt="@project.Name" />
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge-soft badge-soft-amber"><i class="bi bi-geo-alt-fill me-1"></i>@project.Location</span>
+                                @if (project.Status == "Completed")
+                                {
+                                    <span class="badge-soft badge-soft-teal">Completed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-soft badge-soft-terracotta">Ongoing</span>
+                                }
+                            </div>
+                            <h5>@project.Name</h5>
+                            <p class="text-muted-soft" style="min-height: 3.2rem;">@project.Description</p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" role="progressbar" style="width:@(project.ProgressPercentage)%"
+                                     aria-valuenow="@project.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted-soft mb-3">
+                                <span>R@project.RaisedAmount.ToString("N0") raised</span>
+                                <span>Target R@project.TargetAmount.ToString("N0")</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-brand-outline btn-sm flex-fill">View Project</a>
+                                <a asp-controller="Donation" asp-action="Index" class="btn btn-danger btn-sm flex-fill">Donate</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

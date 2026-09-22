@@ -1,0 +1,81 @@
+@model GiftOfTheGivers.Web.Models.VolunteerViewModel
+@{
+    ViewData["Title"] = "Volunteer";
+}
+
+<div class="page-header">
+    <div class="container">
+        <p class="eyebrow mb-2">Get Involved</p>
+        <h1>Register as a Volunteer</h1>
+        <p class="text-muted-soft mb-0" style="max-width:40rem;">
+            Tell us about your skills and availability, and our team will be in touch when there's a fit.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5 pb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card-surface p-4 p-md-5">
+                <form asp-controller="Volunteer" asp-action="Index" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">Email <span class="text-muted-soft fw-normal">(optional)</span></label>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label">Phone <span class="text-muted-soft fw-normal">(optional)</span></label>
+                            <input asp-for="Phone" class="form-control" placeholder="082 000 0000" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-block">Skills</label>
+                        <div>
+                            @foreach (var skill in GiftOfTheGivers.Web.Models.VolunteerViewModel.SkillOptions)
+                            {
+                                var chipId = "skill-" + skill.ToLowerInvariant().Replace(" ", "-");
+                                bool isChecked = Model.SelectedSkills != null && Model.SelectedSkills.Contains(skill);
+                                <input type="checkbox" class="chip-check" name="SelectedSkills" id="@chipId" value="@skill" checked="@(isChecked ? "checked" : null)" />
+                                <label class="chip-check-label" for="@chipId"><i class="bi bi-check-circle-fill"></i>@skill</label>
+                            }
+                        </div>
+                        <span asp-validation-for="SelectedSkills" class="text-danger small d-block mt-1"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label d-block">Availability</label>
+                        <div>
+                            @foreach (var slot in GiftOfTheGivers.Web.Models.VolunteerViewModel.AvailabilityOptions)
+                            {
+                                var chipId = "avail-" + slot.ToLowerInvariant().Replace(" ", "-");
+                                bool isChecked = Model.SelectedAvailability != null && Model.SelectedAvailability.Contains(slot);
+                                <input type="checkbox" class="chip-check" name="SelectedAvailability" id="@chipId" value="@slot" checked="@(isChecked ? "checked" : null)" />
+                                <label class="chip-check-label" for="@chipId"><i class="bi bi-check-circle-fill"></i>@slot</label>
+                            }
+                        </div>
+                        <span asp-validation-for="SelectedAvailability" class="text-danger small d-block mt-1"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 mt-2">
+                        <i class="bi bi-send-fill me-2"></i>Submit Registration
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

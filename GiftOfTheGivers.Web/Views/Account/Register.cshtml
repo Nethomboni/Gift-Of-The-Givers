@@ -1,0 +1,65 @@
+@model GiftOfTheGivers.Web.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <img src="~/images/logo.png" alt="Gift of the Givers logo" class="logo-mark mb-2" onerror="this.style.display='none'" />
+            <h4 class="mb-0">Create a Donor Account</h4>
+            <p class="text-muted-soft small">Track your donation history and give faster next time</p>
+        </div>
+
+        <form asp-controller="Account" asp-action="Register" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label">Full Name</label>
+                <input asp-for="FullName" class="form-control" placeholder="Your full name" autofocus />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <div class="input-group">
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Create a password" />
+                    <button class="btn btn-brand-outline" type="button" data-toggle-password="Password" aria-label="Show password">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" />
+                    <button class="btn btn-brand-outline" type="button" data-toggle-password="ConfirmPassword" aria-label="Show password">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-danger btn-lg w-100 mb-3">Create Account</button>
+
+            <p class="text-center small mb-0">
+                Already have an account? <a asp-controller="Account" asp-action="Login">Login</a>
+            </p>
+            <p class="text-center small text-muted-soft mt-2 mb-0">
+                Prefer not to sign up? <a asp-controller="Donation" asp-action="Index">Donate as a guest instead</a>.
+            </p>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

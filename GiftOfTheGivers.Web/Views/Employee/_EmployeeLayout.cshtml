@@ -1,0 +1,48 @@
+@{
+    Layout = "_Layout";
+}
+<div class="dashboard-hero">
+    <div class="container">
+        <p class="eyebrow mb-1">Employee Portal</p>
+        <h1>@ViewData["DashboardTitle"]</h1>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.EmployeeName as string))
+        {
+            <p>Signed in as @ViewBag.EmployeeName</p>
+        }
+    </div>
+</div>
+
+<div class="container my-4">
+    <div class="d-lg-none mb-3">
+        <button class="btn btn-brand-outline w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#employeeNavOffcanvas" aria-controls="employeeNavOffcanvas">
+            <i class="bi bi-list me-2"></i>Dashboard Menu
+        </button>
+    </div>
+
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="employeeNavOffcanvas" aria-labelledby="employeeNavOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="employeeNavOffcanvasLabel">Employee Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <partial name="_EmployeeSidebar" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3 d-none d-lg-block">
+            <partial name="_EmployeeSidebar" />
+        </div>
+        <div class="col-lg-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@* Declared once here (rather than per-leaf-view) so it always lands after
+   jQuery/Bootstrap load at the bottom of _Layout.cshtml - a section defined
+   by a leaf view is only visible to its DIRECT layout, so a leaf-defined
+   "Scripts" section would render immediately, before those bundles. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

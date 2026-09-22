@@ -1,0 +1,60 @@
+@model List<GiftOfTheGivers.Web.Models.Volunteer>
+@{
+    ViewData["Title"] = "Volunteer Sign-ups";
+    ViewData["DashboardTitle"] = "Volunteer Sign-ups";
+    Layout = "_EmployeeLayout";
+}
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <h5><i class="bi bi-people-fill me-2"></i>All Volunteer Sign-ups</h5>
+        <span class="badge-soft badge-soft-neutral">@Model.Count total</span>
+    </div>
+    <div class="panel-body">
+        @if (!Model.Any())
+        {
+            <div class="empty-state"><i class="bi bi-person-x"></i>No volunteer registrations are available.</div>
+        }
+        else
+        {
+            <div class="table-responsive-card">
+                <table class="table table-clean">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Skills</th>
+                            <th>Availability</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var volunteer in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@volunteer.FullName</div>
+                                    <div class="text-muted-soft small">@volunteer.ReferenceNumber</div>
+                                </td>
+                                <td>@volunteer.Skills</td>
+                                <td>@volunteer.Availability</td>
+                                <td>@volunteer.SubmittedAt.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    @{
+                                        var badgeClass = volunteer.Status switch
+                                        {
+                                            "Contacted" => "badge-soft-teal",
+                                            "Reviewing" => "badge-soft-amber",
+                                            _ => "badge-soft-neutral"
+                                        };
+                                    }
+                                    <span class="badge-soft @badgeClass">@volunteer.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
