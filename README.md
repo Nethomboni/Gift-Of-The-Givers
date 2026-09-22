@@ -1,4 +1,4 @@
-# Gift of the Givers Web Application
+# Gift of the Givers Web Application:
 
 A .NET 8 ASP.NET Core MVC humanitarian-relief platform, extended with Azure Functions for prototype tax-certificate generation and project-update logging.
 
