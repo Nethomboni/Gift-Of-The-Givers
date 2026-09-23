@@ -6,7 +6,7 @@ namespace GiftOfTheGivers.Web.Models
     public class ContactViewModel
     {
         [Required(ErrorMessage = "Please enter your name.")]
-        [StringLength(150, MinimumLength = 2)]
+        [StringLength(150)]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please enter your email address.")]
@@ -18,7 +18,7 @@ namespace GiftOfTheGivers.Web.Models
         public string Subject { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please enter a message.")]
-        [StringLength(2000, MinimumLength = 10)]
+        [StringLength(2000)]
         public string Message { get; set; } = string.Empty;
     }
 }
