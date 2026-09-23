@@ -5,6 +5,7 @@ namespace GiftOfTheGivers.Web.Models
     // Persisted record of a (dummy/prototype) donation. Created by DonationService
     // once a DonationViewModel passes validation - see Section 25/38 of the brief:
     // no real payment processing, just a realistic-looking stored record.
+    // creating donation class
     public class Donation
     {
         #region Identity
