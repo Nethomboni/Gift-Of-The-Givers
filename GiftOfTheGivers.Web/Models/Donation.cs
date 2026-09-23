@@ -7,6 +7,8 @@ namespace GiftOfTheGivers.Web.Models
     // no real payment processing, just a realistic-looking stored record.
     public class Donation
     {
+        #region Identity
+
         public int Id { get; set; }
 
         public string ReferenceNumber { get; set; } = string.Empty;
@@ -14,6 +16,10 @@ namespace GiftOfTheGivers.Web.Models
         // Set when the donor was logged in at the time of donation, so it can
         // show up in their Donor Dashboard history. Null for guest donations.
         public string? UserId { get; set; }
+
+        #endregion
+
+        #region Donation Details
 
         public string DonationType { get; set; } = "OneOff"; // OneOff | Recurring
 
@@ -25,6 +31,12 @@ namespace GiftOfTheGivers.Web.Models
 
         public string Cause { get; set; } = "General Relief";
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        #endregion
+
+        #region Donor Info
+
         public bool IsAnonymous { get; set; }
 
         // Snapshot of the donor's display name at the moment of donation - either
@@ -33,7 +45,12 @@ namespace GiftOfTheGivers.Web.Models
         // depends on whether a query included the related ApplicationUser.
         public string DonorName { get; set; } = "Anonymous Donor";
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        [NotMapped]
+        public string DisplayName => IsAnonymous ? "Anonymous Donor" : DonorName;
+
+        #endregion
+
+        #region Certificate Info
 
         // Populated (Part 2, Section A) by the GenerateTaxCertificate Azure
         // Function immediately after the donation is created. Null until the
@@ -44,7 +61,6 @@ namespace GiftOfTheGivers.Web.Models
 
         public string? CertificateValidationCode { get; set; }
 
-        [NotMapped]
-        public string DisplayName => IsAnonymous ? "Anonymous Donor" : DonorName;
+        #endregion
     }
 }
