@@ -1,6 +1,6 @@
 namespace GiftOfTheGivers.Web.Models
 {
-    // Display-only model for the Home page hero/statistics/featured projects.
+    // Display only model for the Home page hero/statistics/featured projects.
     public class HomeIndexViewModel
     {
         public int VolunteersCount { get; set; }
