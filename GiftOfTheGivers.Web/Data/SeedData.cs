@@ -4,10 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Web.Data
 {
-    // Sets up the in-memory database and seeds roles, two demo accounts, and
-    // realistic prototype data (Section 39) so the app is screenshot-ready
-    // the first time it runs. Every step is idempotent - safe to run on
-    // every application startup.
     public static class SeedData
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
@@ -16,8 +12,6 @@ namespace GiftOfTheGivers.Web.Data
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-            await context.Database.EnsureCreatedAsync();
 
             await SeedRolesAsync(roleManager);
             var donorUser = await SeedUsersAsync(userManager, roleManager, configuration);
