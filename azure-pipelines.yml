@@ -1,34 +1,87 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- master
+  branches:
+    include:
+      - master
 
-pool:
-  vmImage: 'windows-latest'
+pr:
+  branches:
+    include:
+      - master
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  dotnetSdkVersion: '8.x'
+  solutionPath: 'GiftOfTheGivers.sln'
+  webProject: 'GiftOfTheGivers.Web/GiftOfTheGivers.Web.csproj'
+  testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
-steps:
-- task: NuGetToolInstaller@1
+stages:
+  - stage: Build
+    displayName: 'Build and Test'
+    jobs:
+      - job: BuildTest
+        displayName: 'Restore, build, test, publish'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET SDK $(dotnetSdkVersion)'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetSdkVersion)'
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+          - task: NuGetAuthenticate@1
+            displayName: 'Authenticate to Azure Artifacts'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore'
+            inputs:
+              command: 'restore'
+              projects: '$(solutionPath)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Build'
+            inputs:
+              command: 'build'
+              projects: '$(solutionPath)'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit and integration tests'
+            inputs:
+              command: 'test'
+              projects: '$(solutionPath)'
+              publishTestResults: false
+              arguments: '--configuration $(buildConfiguration) --no-build --filter "Category!=UI" --collect:"XPlat Code Coverage" --logger trx --results-directory $(testResultsDir)'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish test results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '**/*.trx'
+              searchFolder: '$(testResultsDir)'
+              mergeTestResults: true
+              failTaskOnMissingResultsFile: false
+              testRunTitle: 'Unit and Integration Tests'
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish code coverage'
+            condition: always()
+            inputs:
+              summaryFileLocation: '$(testResultsDir)/**/coverage.cobertura.xml'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish web app'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: '$(webProject)'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/web'
+              zipAfterPublish: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish web artifact'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/web'
+              artifact: 'web'
