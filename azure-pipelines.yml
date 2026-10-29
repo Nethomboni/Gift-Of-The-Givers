@@ -80,8 +80,65 @@ stages:
               arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/web'
               zipAfterPublish: true
 
+          - script: |
+              dotnet tool install --global dotnet-ef --version 8.0.20
+              echo "##vso[task.prependpath]$HOME/.dotnet/tools"
+            displayName: 'Install dotnet-ef'
+
+          - script: >
+              dotnet ef migrations script
+              --idempotent
+              --project $(webProject)
+              --configuration $(buildConfiguration)
+              --no-build
+              --output $(Build.ArtifactStagingDirectory)/sql/migrate.sql
+            displayName: 'Generate idempotent migration script'
+
+          - script: >
+              dotnet ef migrations bundle
+              --project $(webProject)
+              --configuration $(buildConfiguration)
+              --self-contained
+              --runtime linux-x64
+              --output $(Build.ArtifactStagingDirectory)/sql/efbundle
+              --force
+            displayName: 'Build migration bundle'
+
           - task: PublishPipelineArtifact@1
             displayName: 'Publish web artifact'
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)/web'
               artifact: 'web'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish SQL artifact'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/sql'
+              artifact: 'sql'
+
+  - stage: Database
+    displayName: 'Apply SQL migrations'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    variables:
+      - group: 'gotg-sql'
+    jobs:
+      - deployment: ApplyMigrations
+        displayName: 'Apply EF Core migrations to Azure SQL'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'Database'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 'sql'
+
+                - script: |
+                    chmod +x $(Pipeline.Workspace)/sql/efbundle
+                    $(Pipeline.Workspace)/sql/efbundle --connection "$SQL_CONNECTION"
+                  displayName: 'Apply migrations to Azure SQL'
+                  env:
+                    SQL_CONNECTION: $(sqlConnectionString)
+                    ConnectionStrings__DefaultConnection: $(sqlConnectionString)

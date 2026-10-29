@@ -4,9 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Web.Data
 {
-    // IdentityDbContext<ApplicationUser> gives us the AspNetUsers / AspNetRoles /
-    // AspNetUserRoles tables for authentication, alongside our own prototype
-    // tables (Donations, Volunteers, Projects, ProjectUpdates).
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -23,14 +20,16 @@ namespace GiftOfTheGivers.Web.Data
         {
             base.OnModelCreating(builder);
 
-            // Note: no HasColumnType(...) calls here - that's a relational-only
-            // concept (Microsoft.EntityFrameworkCore.Relational), which isn't
-            // part of the dependency graph now that persistence is in-memory
-            // only. Precision on the decimal properties is already exact in
-            // .NET regardless, so nothing is lost by leaving it out.
             builder.Entity<Donation>(entity =>
             {
                 entity.HasIndex(d => d.ReferenceNumber).IsUnique();
+                entity.Property(d => d.Amount).HasPrecision(18, 2);
+            });
+
+            builder.Entity<Project>(entity =>
+            {
+                entity.Property(p => p.TargetAmount).HasPrecision(18, 2);
+                entity.Property(p => p.RaisedAmount).HasPrecision(18, 2);
             });
 
             builder.Entity<Volunteer>(entity =>
