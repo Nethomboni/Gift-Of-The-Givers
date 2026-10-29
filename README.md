@@ -156,8 +156,8 @@ Install:
 Clone the repository:
 
 ```bash
-git clone https://github.com/Nethomboni/GiftOfTheGivers.git
-cd GiftOfTheGivers
+git clone https://github.com/Nethomboni/gift-of-the-givers.git
+cd gift-of-the-givers
 dotnet restore
 ```
 
@@ -268,6 +268,10 @@ This is a development/prototype implementation:
 ## Additional Documentation
 
 `PART2_SECTION_A_README.md` contains the original Part 2 Section A documentation, including the Azure Functions integration, local setup and deployment notes.
+
+## Continuous Integration
+
+Every commit and pull request to `master` triggers the `GiftOfTheGivers-CI` pipeline in Azure DevOps. The pipeline restores, builds, runs all unit and integration tests, publishes test results and code coverage, and packages the web app as a build artifact.
 
 ## Author
 
