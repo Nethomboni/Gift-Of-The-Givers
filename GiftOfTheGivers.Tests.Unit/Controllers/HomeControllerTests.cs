@@ -1,7 +1,9 @@
+
 using GiftOfTheGivers.Tests.Unit.TestSupport;
 using GiftOfTheGivers.Web.Controllers;
 using GiftOfTheGivers.Web.Models;
 using GiftOfTheGivers.Web.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -11,11 +13,16 @@ namespace GiftOfTheGivers.Tests.Unit.Controllers
     {
         private readonly Mock<IVolunteerService> _volunteers = new();
 
-        private HomeController CreateSut(Web.Data.ApplicationDbContext context) => new(context, _volunteers.Object)
+        private HomeController CreateSut(Web.Data.ApplicationDbContext context)
         {
-            ControllerContext = TestFactory.ControllerContext(),
-            TempData = TestFactory.TempData()
-        };
+            var cache = new MemoryCache(new MemoryCacheOptions());
+
+            return new HomeController(context, _volunteers.Object, cache)
+            {
+                ControllerContext = TestFactory.ControllerContext(),
+                TempData = TestFactory.TempData()
+            };
+        }
 
         [Fact]
         public async Task Index_WithProjects_ReturnsCountsAndMaxThreeFeaturedOngoing()
