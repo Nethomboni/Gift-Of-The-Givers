@@ -1,9 +1,11 @@
-using System.Diagnostics;
+
 using GiftOfTheGivers.Web.Data;
 using GiftOfTheGivers.Web.Models;
 using GiftOfTheGivers.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
 
 namespace GiftOfTheGivers.Web.Controllers
 {
@@ -11,27 +13,36 @@ namespace GiftOfTheGivers.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IVolunteerService _volunteerService;
+        private readonly IMemoryCache _cache;
 
-        public HomeController(ApplicationDbContext context, IVolunteerService volunteerService)
+        public HomeController(ApplicationDbContext context, IVolunteerService volunteerService, IMemoryCache cache)
         {
             _context = context;
             _volunteerService = volunteerService;
+            _cache = cache;
         }
 
         public async Task<IActionResult> Index()
         {
-            var featuredProjects = await _context.Projects
-                .Where(p => p.Status == "Ongoing")
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(3)
-                .ToListAsync();
-
-            var model = new HomeIndexViewModel
+            var model = await _cache.GetOrCreateAsync("home-index", async entry =>
             {
-                VolunteersCount = await _volunteerService.GetCountAsync(),
-                ActiveProjectsCount = await _context.Projects.CountAsync(p => p.Status == "Ongoing"),
-                FeaturedProjects = featuredProjects
-            };
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60);
+
+                var featuredProjects = await _context.Projects
+                    .Where(p => p.Status == "Ongoing")
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Take(3)
+                    .ToListAsync();
+
+                var model = new HomeIndexViewModel
+                {
+                    VolunteersCount = await _volunteerService.GetCountAsync(),
+                    ActiveProjectsCount = await _context.Projects.CountAsync(p => p.Status == "Ongoing"),
+                    FeaturedProjects = featuredProjects
+                };
+
+                return model;
+            });
 
             return View(model);
         }
