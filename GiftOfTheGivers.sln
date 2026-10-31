@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Functions",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Tests.Unit", "GiftOfTheGivers.Tests.Unit\GiftOfTheGivers.Tests.Unit.csproj", "{02A892C0-B0AA-4AED-B915-82719F56BDD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Tests.UI", "GiftOfTheGivers.Tests.UI\GiftOfTheGivers.Tests.UI.csproj", "{20F572A8-4389-4D1A-9E13-B20A2A48E65B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,8 +57,23 @@ Global
 		{02A892C0-B0AA-4AED-B915-82719F56BDD3}.Release|x64.Build.0 = Release|Any CPU
 		{02A892C0-B0AA-4AED-B915-82719F56BDD3}.Release|x86.ActiveCfg = Release|Any CPU
 		{02A892C0-B0AA-4AED-B915-82719F56BDD3}.Release|x86.Build.0 = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|x64.Build.0 = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Debug|x86.Build.0 = Debug|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x64.ActiveCfg = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x64.Build.0 = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x86.ActiveCfg = Release|Any CPU
+		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E80B822D-8033-4E3D-9ECB-7450E5F802B7}
 	EndGlobalSection
 EndGlobal
