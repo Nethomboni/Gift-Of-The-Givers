@@ -16,7 +16,7 @@
         <div class="col-6 col-md-4">
             <div class="stat-tile">
                 <div class="stat-icon" style="background: var(--danger-soft); color: var(--terracotta);"><i class="bi bi-cash-coin"></i></div>
-                <span class="stat-value">R@Model.TotalDonated.ToString("N0")</span>
+                <span class="stat-value">R@(Model.TotalDonated.ToString("N0"))</span>
                 <span class="stat-label">Total Donated</span>
             </div>
         </div>
@@ -32,7 +32,7 @@
                 <div class="stat-icon" style="background: var(--success-soft); color: var(--teal);"><i class="bi bi-clock-history"></i></div>
                 @if (Model.LatestDonation != null)
                 {
-                    <span class="stat-value">R@Model.LatestDonation.Amount.ToString("N0")</span>
+                    <span class="stat-value">R@(Model.LatestDonation.Amount.ToString("N0"))</span>
                     <span class="stat-label">Latest Donation - @Model.LatestDonation.CreatedAt.ToString("dd MMM yyyy")</span>
                 }
                 else

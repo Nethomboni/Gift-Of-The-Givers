@@ -116,8 +116,8 @@
                                      aria-valuenow="@project.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <div class="d-flex justify-content-between small text-muted-soft mb-3">
-                                <span>R@project.RaisedAmount.ToString("N0") raised</span>
-                                <span>Target R@project.TargetAmount.ToString("N0")</span>
+                                <span>R@(project.RaisedAmount.ToString("N0")) raised</span>
+                                <span>Target R@(project.TargetAmount.ToString("N0"))</span>
                             </div>
                             <div class="d-flex gap-2">
                                 <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-brand-outline btn-sm flex-fill">View Project</a>

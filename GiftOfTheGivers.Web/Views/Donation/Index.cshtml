@@ -44,7 +44,7 @@
                         @foreach (var preset in GiftOfTheGivers.Web.Models.DonationViewModel.PresetAmounts)
                         {
                             <div class="col-4 col-md-2">
-                                <button type="button" class="amount-btn" data-amount-btn="@preset">R@preset.ToString("N0")</button>
+                                <button type="button" class="amount-btn" data-amount-btn="@preset">R@(preset.ToString("N0"))</button>
                             </div>
                         }
                     </div>
