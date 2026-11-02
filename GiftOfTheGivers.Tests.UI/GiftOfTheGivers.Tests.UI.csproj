@@ -23,8 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Screenshots\" />
-    <Folder Include="Support\" />
-    <Folder Include="Pages\" />
   </ItemGroup>
 
 </Project>
