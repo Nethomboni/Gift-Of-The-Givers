@@ -15,6 +15,9 @@ variables:
   webProject: 'GiftOfTheGivers.Web/GiftOfTheGivers.Web.csproj'
   unitTestProject: 'GiftOfTheGivers.Tests.Unit/GiftOfTheGivers.Tests.Unit.csproj'
   integrationTestProject: 'GiftOfTheGivers.Tests.Integration/GiftOfTheGivers.Tests.Integration.csproj'
+  functionsProject: 'GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj'
+  functionAppName: 'gotg-functions-st10311127'
+  functionAppUrl: 'https://gotg-functions-st10311127-fwf6fzhjbwasa0c5.southafricanorth-01.azurewebsites.net'
   testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
 stages:
@@ -90,6 +93,16 @@ stages:
               arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/web'
               zipAfterPublish: true
 
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish Functions app'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: '$(functionsProject)'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/functions'
+              zipAfterPublish: true
+              modifyOutputPath: false
+
           - script: |
               dotnet tool install --global dotnet-ef --version 8.0.20
               echo "##vso[task.prependpath]$HOME/.dotnet/tools"
@@ -126,6 +139,12 @@ stages:
               targetPath: '$(Build.ArtifactStagingDirectory)/sql'
               artifact: 'sql'
 
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Functions artifact'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/functions'
+              artifact: 'functions'
+
   - stage: Database
     displayName: 'Apply SQL migrations'
     dependsOn: Build
@@ -152,3 +171,34 @@ stages:
                   env:
                     SQL_CONNECTION: $(sqlConnectionString)
                     ConnectionStrings__DefaultConnection: $(sqlConnectionString)
+
+  - stage: DeployFunctions
+    displayName: 'Deploy Azure Functions'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+      - job: DeployFunctionApp
+        displayName: 'Deploy to gotg-functions-st10311127'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - download: current
+            artifact: 'functions'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Function App (zip deploy)'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'gotg-functions-connection'
+              appType: 'functionApp'
+              WebAppName: '$(functionAppName)'
+              packageForLinux: '$(Pipeline.Workspace)/functions/*.zip'
+              enableCustomDeployment: true
+              DeploymentType: 'zipDeploy'
+
+          - script: |
+              sleep 30
+              code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$(functionAppUrl)/api/projectupdates/log" -H "Content-Type: application/json" -d '{}')
+              echo "Smoke test HTTP status: $code"
+              if [ "$code" -ge 500 ] || [ "$code" = "000" ] || [ "$code" = "404" ]; then exit 1; fi
+            displayName: 'Smoke test Functions endpoint'
