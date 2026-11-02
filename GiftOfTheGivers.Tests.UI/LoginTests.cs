@@ -1,35 +1,41 @@
-﻿using GiftOfTheGivers.Tests.UI.Pages;
+using GiftOfTheGivers.Tests.UI.Pages;
 using GiftOfTheGivers.Tests.UI.Support;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-
 
 namespace GiftOfTheGivers.Tests.UI
 {
     [Trait("Category", "UI")]
-    public class LoginTests : IDisposable
+    public class LoginTests : UiTestBase
     {
-        private IWebDriver? _driver;
-
         [Theory]
         [InlineData("chrome")]
         [InlineData("edge")]
         public void Login_ValidEmployee_ReachesDashboard(string browser)
         {
-            _driver = DriverFactory.Create(browser);
-            var loginPage = new LoginPage(_driver);
+            Start(browser, nameof(Login_ValidEmployee_ReachesDashboard));
+            var loginPage = new LoginPage(Driver);
 
             loginPage.Open();
             loginPage.LoginAs(TestSettings.EmployeeEmail, TestSettings.EmployeePassword);
 
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-            wait.Until(d => d.Url.Contains("/Employee"));
-            Assert.True(_driver.FindElement(By.XPath("//h5[contains(.,'Recent Donations')]")).Displayed);
+            Wait().Until(d => d.Url.Contains("/Employee"));
+            Assert.True(Driver.FindElement(By.XPath("//h5[contains(.,'Recent Donations')]")).Displayed);
         }
 
-        public void Dispose()
+        [Theory]
+        [InlineData("chrome")]
+        [InlineData("edge")]
+        public void Login_WrongPassword_ShowsErrorAndStaysOnLogin(string browser)
         {
-            _driver?.Quit();
+            Start(browser, nameof(Login_WrongPassword_ShowsErrorAndStaysOnLogin));
+            var loginPage = new LoginPage(Driver);
+
+            loginPage.Open();
+            loginPage.LoginAs(TestSettings.EmployeeEmail, "Wrong-Password-123!");
+
+            var error = loginPage.loginError();
+            Assert.Contains("Invalid login attempt", error);
+            Assert.Contains("/Account/Login", Driver.Url);
         }
     }
 }

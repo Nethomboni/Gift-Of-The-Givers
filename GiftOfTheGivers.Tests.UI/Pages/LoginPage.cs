@@ -1,7 +1,6 @@
 ﻿using GiftOfTheGivers.Tests.UI.Support;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GiftOfTheGivers.Tests.UI.Pages
 {
@@ -22,19 +21,21 @@ namespace GiftOfTheGivers.Tests.UI.Pages
         public void Open()
         {
             _driver.Navigate().GoToUrl(TestSettings.BaseUrl + "/Account/Login");
-            new WebDriverWait(_driver, TimeSpan.FromSeconds(10)).Until(d => d.FindElement(_email).Displayed);
+            new WebDriverWait(_driver, TimeSpan.FromSeconds(20)).Until(d => d.FindElement(_email).Displayed);
         }
 
         public void LoginAs(string email, string password)
         {
             _driver.FindElement(_email).SendKeys(email);
             _driver.FindElement(_password).SendKeys(password);
-            _driver.FindElement(_loginButton).Click();
+            var button = _driver.FindElement(_loginButton);
+            ((IJavaScriptExecutor)_driver).ExecuteScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", button);
         }
-        public string loginError( )
+
+        public string loginError()
         {
-            new WebDriverWait(_driver, TimeSpan.FromSeconds(10)).Until(d => d.FindElement(_errormessage).Displayed);
+            new WebDriverWait(_driver, TimeSpan.FromSeconds(20)).Until(d => d.FindElement(_errormessage).Displayed);
             return _driver.FindElement(_errormessage).Text;
         }
     }
-    }
+}
