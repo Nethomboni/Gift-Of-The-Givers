@@ -18,6 +18,7 @@ variables:
   functionsProject: 'GiftOfTheGivers.Functions/GiftOfTheGivers.Functions.csproj'
   functionAppName: 'gotg-functions-st10311127'
   functionAppUrl: 'https://gotg-functions-st10311127-fwf6fzhjbwasa0c5.southafricanorth-01.azurewebsites.net'
+  webProdUrl: 'https://giftofthegiverssa-gubpd7bqbed6dvdn.southafricanorth-01.azurewebsites.net'
   testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
 stages:
@@ -206,3 +207,91 @@ stages:
               echo "Smoke test HTTP status: $code"
               if [ "$code" -ge 500 ] || [ "$code" = "000" ] || [ "$code" = "404" ]; then exit 1; fi
             displayName: 'Smoke test Functions endpoint'
+
+  - stage: DeployWebStaging
+    displayName: 'Deploy web app to Staging'
+    dependsOn:
+      - Build
+      - Database
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    variables:
+      - group: 'gotg-web'
+    jobs:
+      - deployment: DeployStaging
+        displayName: 'Zip deploy to giftofthegiverssa-staging'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'Staging'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 'web'
+
+                - script: |
+                    zip=$(find "$(Pipeline.Workspace)/web" -name '*.zip' | head -n 1)
+                    if [ -z "$zip" ]; then echo "No zip found"; ls -R "$(Pipeline.Workspace)/web"; exit 1; fi
+                    echo "Deploying $zip to $SCM_HOST"
+                    code=$(curl -s -o response.txt -w "%{http_code}" -u "$DEPLOY_USER:$DEPLOY_PASSWORD" -X POST --data-binary @"$zip" -H "Content-Type: application/zip" "https://$SCM_HOST/api/zipdeploy?isAsync=false")
+                    cat response.txt
+                    echo "Zip deploy HTTP status: $code"
+                    if [ "$code" != "200" ] && [ "$code" != "202" ]; then exit 1; fi
+                  displayName: 'Deploy web app to Staging (Kudu zip deploy)'
+                  env:
+                    SCM_HOST: $(webStagingScmHost)
+                    DEPLOY_USER: $(webStagingUser)
+                    DEPLOY_PASSWORD: $(webStagingPassword)
+
+                - script: |
+                    for i in $(seq 1 12); do
+                      code=$(curl -s -o /dev/null -w "%{http_code}" "$(webStagingUrl)/")
+                      echo "Attempt $i: Staging home page HTTP status $code"
+                      if [ "$code" = "200" ]; then exit 0; fi
+                      sleep 15
+                    done
+                    exit 1
+                  displayName: 'Smoke test Staging'
+
+  - stage: DeployWebProduction
+    displayName: 'Deploy web app to Production'
+    dependsOn: DeployWebStaging
+    condition: succeeded()
+    variables:
+      - group: 'gotg-web'
+    jobs:
+      - deployment: DeployProduction
+        displayName: 'Zip deploy to giftofthegiverssa (Production)'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 'web'
+
+                - script: |
+                    zip=$(find "$(Pipeline.Workspace)/web" -name '*.zip' | head -n 1)
+                    if [ -z "$zip" ]; then echo "No zip found"; ls -R "$(Pipeline.Workspace)/web"; exit 1; fi
+                    echo "Deploying $zip to $SCM_HOST"
+                    code=$(curl -s -o response.txt -w "%{http_code}" -u "$DEPLOY_USER:$DEPLOY_PASSWORD" -X POST --data-binary @"$zip" -H "Content-Type: application/zip" "https://$SCM_HOST/api/zipdeploy?isAsync=false")
+                    cat response.txt
+                    echo "Zip deploy HTTP status: $code"
+                    if [ "$code" != "200" ] && [ "$code" != "202" ]; then exit 1; fi
+                  displayName: 'Deploy web app to Production (Kudu zip deploy)'
+                  env:
+                    SCM_HOST: $(webProdScmHost)
+                    DEPLOY_USER: $(webProdUser)
+                    DEPLOY_PASSWORD: $(webProdPassword)
+
+                - script: |
+                    for i in $(seq 1 12); do
+                      code=$(curl -s -o /dev/null -w "%{http_code}" "$(webProdUrl)/")
+                      echo "Attempt $i: Production home page HTTP status $code"
+                      if [ "$code" = "200" ]; then exit 0; fi
+                      sleep 15
+                    done
+                    exit 1
+                  displayName: 'Smoke test Production'
