@@ -101,7 +101,6 @@ stages:
               projects: '$(functionsProject)'
               arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/functions'
               zipAfterPublish: true
-              modifyOutputPath: false
 
           - script: |
               dotnet tool install --global dotnet-ef --version 8.0.20
@@ -176,6 +175,8 @@ stages:
     displayName: 'Deploy Azure Functions'
     dependsOn: Build
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    variables:
+      - group: 'gotg-functions'
     jobs:
       - job: DeployFunctionApp
         displayName: 'Deploy to gotg-functions-st10311127'
@@ -185,16 +186,19 @@ stages:
           - download: current
             artifact: 'functions'
 
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Function App (zip deploy)'
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'gotg-functions-connection'
-              appType: 'functionApp'
-              WebAppName: '$(functionAppName)'
-              packageForLinux: '$(Pipeline.Workspace)/functions/*.zip'
-              enableCustomDeployment: true
-              DeploymentType: 'zipDeploy'
+          - script: |
+              zip=$(find "$(Pipeline.Workspace)/functions" -name '*.zip' | head -n 1)
+              if [ -z "$zip" ]; then echo "No zip found"; ls -R "$(Pipeline.Workspace)/functions"; exit 1; fi
+              echo "Deploying $zip to $SCM_HOST"
+              code=$(curl -s -o response.txt -w "%{http_code}" -u "$DEPLOY_USER:$DEPLOY_PASSWORD" -X POST --data-binary @"$zip" -H "Content-Type: application/zip" "https://$SCM_HOST/api/zipdeploy?isAsync=false")
+              cat response.txt
+              echo "Zip deploy HTTP status: $code"
+              if [ "$code" != "200" ] && [ "$code" != "202" ]; then exit 1; fi
+            displayName: 'Deploy Function App (Kudu zip deploy)'
+            env:
+              SCM_HOST: $(functionsScmHost)
+              DEPLOY_USER: $(functionsDeployUser)
+              DEPLOY_PASSWORD: $(functionsDeployPassword)
 
           - script: |
               sleep 30
