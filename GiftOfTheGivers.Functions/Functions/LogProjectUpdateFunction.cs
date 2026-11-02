@@ -71,7 +71,8 @@ namespace GiftOfTheGivers.Functions.Functions
                 Description = update.Description,
                 Location = update.Location,
                 PostedByName = update.PostedByName,
-                CreatedAt = update.CreatedAt == default ? DateTime.UtcNow : update.CreatedAt
+                CreatedAt = update.CreatedAt == default ? DateTime.UtcNow : update.CreatedAt.ToUniversalTime()
+
             };
 
             await _tableClient.AddEntityAsync(entity);

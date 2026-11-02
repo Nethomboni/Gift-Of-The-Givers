@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Tests.Unit"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Tests.UI", "GiftOfTheGivers.Tests.UI\GiftOfTheGivers.Tests.UI.csproj", "{20F572A8-4389-4D1A-9E13-B20A2A48E65B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiftOfTheGivers.Tests.Integration", "GiftOfTheGivers.Tests.Integration\GiftOfTheGivers.Tests.Integration.csproj", "{2F27793F-25E3-4DE5-A66D-457940C17514}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x64.Build.0 = Release|Any CPU
 		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x86.ActiveCfg = Release|Any CPU
 		{20F572A8-4389-4D1A-9E13-B20A2A48E65B}.Release|x86.Build.0 = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|x64.Build.0 = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Debug|x86.Build.0 = Debug|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|x64.ActiveCfg = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|x64.Build.0 = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|x86.ActiveCfg = Release|Any CPU
+		{2F27793F-25E3-4DE5-A66D-457940C17514}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,6 +13,8 @@ variables:
   dotnetSdkVersion: '8.x'
   solutionPath: 'GiftOfTheGivers.sln'
   webProject: 'GiftOfTheGivers.Web/GiftOfTheGivers.Web.csproj'
+  unitTestProject: 'GiftOfTheGivers.Tests.Unit/GiftOfTheGivers.Tests.Unit.csproj'
+  integrationTestProject: 'GiftOfTheGivers.Tests.Integration/GiftOfTheGivers.Tests.Integration.csproj'
   testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
 stages:
@@ -47,12 +49,20 @@ stages:
               arguments: '--configuration $(buildConfiguration) --no-restore'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Run unit and integration tests'
+            displayName: 'Run unit tests'
             inputs:
               command: 'test'
-              projects: '$(solutionPath)'
+              projects: '$(unitTestProject)'
               publishTestResults: false
               arguments: '--configuration $(buildConfiguration) --no-build --filter "Category!=UI" --collect:"XPlat Code Coverage" --logger trx --results-directory $(testResultsDir)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            inputs:
+              command: 'test'
+              projects: '$(integrationTestProject)'
+              publishTestResults: false
+              arguments: '--configuration $(buildConfiguration) --no-build --filter "Category!=UI&Category!=Functions" --collect:"XPlat Code Coverage" --logger trx --results-directory $(testResultsDir)'
 
           - task: PublishTestResults@2
             displayName: 'Publish test results'
